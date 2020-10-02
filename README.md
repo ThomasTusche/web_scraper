@@ -6,7 +6,8 @@ The german version of H&amp;M Home Website (https://www2.hm.com/de_de/home/produ
 If you use 'Selenium' with the *headless* option, you get an **access denied** notification.
 To solve this, you have to change the *user_agent* part for your request like I did in my code.
 
-Now you should be able to scrape the website and extract any data you want.
+Now you should be able to scrape the website and extract any data you want. Currently it is just pulling all the HTML code. 
+Depending on your use case you have to filter the result to match your specific needs.
 
 ## Tools Used
 
