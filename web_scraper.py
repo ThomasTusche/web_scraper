@@ -1,25 +1,39 @@
 from selenium import webdriver
-from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.firefox.options import Options
+from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
+import time
 import boto3
 
-
-DRIVER_PATH = './chromedriver'
-URL = 'https://www2.hm.com/de_de/home/produkte/kissen.html'
-
 options = Options()
-options.add_argument("--no-sandbox")
-options.add_argument("--headless")
-options.add_argument('--remote-debugging-port=9222')
+options.headless = True
+options.log.level = "trace"
 
-wd = webdriver.Chrome(options=options, executable_path=DRIVER_PATH, service_log_path='./log.txt')
+firefox_capabilities = DesiredCapabilities.FIREFOX
+firefox_capabilities['marionette'] = True
 
-wd.execute_cdp_cmd('Network.setUserAgentOverride', {"userAgent": 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.97 Safari/537.36'})
+browser = webdriver.Firefox(options=options, executable_path='./geckodriver', service_log_path='./log_test.txt')
 
-wd.get(URL) # Gibt den HTML Code der Seite zurück.
+browser.get('https://www.lidl.de/de/parkside-performance-akku-drehschlagschrauber-1-2-passp-20-li-a1-ohne-akku-und-ladegeraet/p361369')
 
-sns = boto3.client('sns')
+html = browser.find_element_by_id("add-to-cart")
 
-response = sns.publish(
-    PhoneNumber='+4915162513577',
-    Message='Artikel xyz ist jetzt bei H und M verfügbar!',    
-)
+test = html.get_attribute("disabled")
+
+
+time.sleep(2)
+
+if test == "true":
+
+    print("No Email Send")
+
+else:
+    
+    sns = boto3.client('sns')
+
+    response = sns.publish(
+        PhoneNumber='+491778556587',
+        Message='Akku-Drehschlagschrauber wieder verfügbar -> https://www.lidl.de/de/parkside-performance-akku-drehschlagschrauber-1-2-passp-20-li-a1-ohne-akku-und-ladegeraet/p361369',    
+    )
+
+    print("Email Send")
+

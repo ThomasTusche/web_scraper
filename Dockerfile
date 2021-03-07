@@ -5,9 +5,9 @@ WORKDIR /usr/src/app
 RUN pip3 install boto3 && \
     pip3 install selenium
 
-RUN apt update && \
-    wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb && \
-    apt install ./google-chrome-stable_current_amd64.deb -y
+RUN sh -c 'echo "APT::Default-Release "stable";" >> /etc/apt/apt.conf' 
+RUN sh -c 'echo "deb http://ftp.hr.debian.org/debian sid main contrib non-free" >> /etc/apt/sources.list'
+RUN apt-get update -y && apt-get install -yt sid firefox
 
 COPY . .
 
